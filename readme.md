@@ -1,6 +1,6 @@
 # audiofxrs 
     
-The aim of this project is just explore audio effects and learn rust by building a audio effects CLI tool. The project is is a work in progress and extremly far away from being something meaningful.
+The aim of this project is just explore audio effects and learn rust by building an audio effects CLI tool. The project is is a work in progress and extremly far away from being something meaningful.
 
 # Implemented:
 
