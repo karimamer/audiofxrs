@@ -189,11 +189,3 @@ cargo build --release
 ## License
 
 GNU General Public License v3.0 - see LICENSE file for details.
-
-## Contributing
-
-<<<<<<< HEAD
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
-=======
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
->>>>>>> ab699f5 (Intial refactors)
