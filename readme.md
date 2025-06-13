@@ -1,45 +1,196 @@
-# audiofxrs 
-    
-The aim of this project is just explore audio effects and learn rust by building an audio effects CLI tool. The project is a work in progress and extremly far away from being something meaningful.
 
-# Implemented:
+# AudioFXRS - Rust Audio Effects Processor
 
-**Distortion**: Distortion effects simulate the sound of an overdriven amplifier. This can be done using various methods such as clipping, waveshaping, or applying transfer functions to the input signal.
+The aim of this project is just explore audio effects and learn rust by building an audio effects CLI tool.
+A modular, command-line audio effects processor written in Rust. This project provides a unified interface for applying various audio effects to WAV files with configurable parameters.
 
-**Chorus**: Chorus adds richness to the sound by simulating multiple slightly detuned versions of the input signal. This can be achieved by using multiple delay lines with modulated delay times.
+## Features
 
-**Flanger**: A flanger creates a sweeping comb filter effect by mixing the input signal with a modulated delayed version of itself. It is similar to chorus but with a shorter delay time and higher feedback.
+### Implemented Effects
 
-**Phaser**: A phaser creates a sweeping notch filter effect by modulating the phase of the input signal. This is often achieved by using an all-pass filter with a modulated delay time.
+- **Chorus**: Adds richness by simulating multiple detuned versions of the input signal
+- **Distortion**: Multiple distortion types including soft clip, hard clip, overdrive, and fuzz
+- **Reverb**: Algorithmic reverb with configurable room size, damping, and pre-delay
+- **Compression**: Dynamic range compression with configurable threshold, ratio, attack, and release
+- **EQ**: 3-band equalizer with adjustable frequency bands and gains
+- **Flanger**: Sweeping comb filter effect with modulated delay
+- **Phaser**: Phase modulation effect creating moving notches in the frequency spectrum
+- **Tremolo**: Amplitude modulation with multiple waveform shapes
+- **Vibrato**: Pitch modulation effect
+- **Pitch Shifting**: Change pitch without affecting duration (basic implementation)
+- **Time Stretching**: Change duration without affecting pitch (basic implementation)
 
-**Tremolo**: Tremolo is the modulation of the amplitude (volume) of the input signal at a specific frequency. This can be achieved by multiplying the input signal with a low-frequency oscillator (LFO) waveform, such as a sine wave.
+### Architecture
 
-**Vibrato**: Vibrato is the modulation of the pitch of the input signal at a specific frequency. This can be achieved by modulating the delay time of a delay line with a low-frequency oscillator (LFO).
+The codebase has been completely refactored with a modular design:
 
-**Equalization** (EQ): EQ is the process of adjusting the balance between different frequency components of the input signal. This can be achieved using various types of filters, such as low-pass, high-pass, band-pass, or notch filters.
+- **Unified CLI**: Single binary with effect selection via command line
+- **Common Audio I/O**: Shared WAV file reading/writing with proper error handling
+- **Effect Trait System**: All effects implement a common `AudioEffect` trait
+- **Parameter System**: Type-safe parameter handling with validation
+- **DSP Utilities**: Shared digital signal processing functions and delay lines
 
-**Compression**: Compression reduces the dynamic range of the input signal by attenuating the amplitude of loud signals and amplifying quiet signals. This can be done using various methods, such as peak, RMS, or multi-band compression.
+## Installation
 
-**Pitch shifting**: Pitch shifting changes the pitch of the input signal without affecting its duration. This can be achieved using various algorithms, such as granular synthesis or phase vocoding.
+```bash
+git clone <repository-url>
+cd audiofxrs
+cargo build --release
+```
 
-Time stretching: Time stretching changes the duration of the input signal without affecting its pitch. This can be achieved using various algorithms, such as granular synthesis, phase vocoding, or the synchronized overlap-add (SOLA) method.
+## Usage
 
-# To be implmented 
-**Limiting**: Restricts the maximum amplitude of an audio signal to a specific threshold.
+### Basic Syntax
 
-**Expander/Gate**: Increases the dynamic range of an audio signal by attenuating the volume of quiet parts and/or amplifying loud parts.
+```bash
+audiofxrs <effect> <input.wav> <output.wav> [--param value]
+```
 
-**Frequency Shifting**: Shifts all frequency components of an audio signal by a fixed amount.
+### List Available Effects
 
-**Ring Modulation**: Multiplies the input signal with another signal (usually a sine wave), creating inharmonic sidebands.
+```bash
+audiofxrs --list
+```
 
-**Bitcrushing**: Reduces the bit depth and/or sample rate of an audio signal, introducing distortion and aliasing.
+### Get Effect Information
 
-**Auto-Wah/Envelope Filter**: Modulates the frequency of a band-pass or low-pass filter based on the amplitude of the input signal.
+```bash
+audiofxrs --info <effect_name>
+```
 
-**Stereo Widening**: Enhances the stereo image of an audio signal by manipulating the differences between the left and right channels.
+### Examples
 
-**Convolution**: Processes the input signal with an impulse response, which can be used to apply reverberation, EQ, or other effects based on real or virtual spaces.
+```bash
+# Apply chorus with custom parameters
+audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0 --mix 0.7
 
+# Apply distortion
+audiofxrs distortion input.wav output.wav --gain 3.0 --type 1 --mix 0.8
 
+# Apply reverb
+audiofxrs reverb input.wav output.wav --room_size 0.8 --mix 0.4 --damping 0.6
 
+# Apply compression
+audiofxrs compression input.wav output.wav --threshold 0.3 --ratio 4.0 --attack 5.0
+
+# Apply tremolo with triangle wave
+audiofxrs tremolo input.wav output.wav --rate 8.0 --depth 0.6 --wave 1
+
+# Get help for a specific effect
+audiofxrs --info chorus
+```
+
+## Effect Parameters
+
+### Chorus
+- `--rate`: LFO rate in Hz (0.1 to 10.0, default: 0.5)
+- `--depth`: Modulation depth in milliseconds (0.1 to 10.0, default: 2.0)
+- `--mix`: Wet/dry mix (0.0 to 1.0, default: 0.5)
+- `--feedback`: Feedback amount (0.0 to 0.9, default: 0.0)
+
+### Distortion
+- `--gain`: Input gain amount (0.1 to 10.0, default: 2.0)
+- `--threshold`: Distortion threshold (0.1 to 1.0, default: 0.7)
+- `--mix`: Wet/dry mix (0.0 to 1.0, default: 1.0)
+- `--output`: Output level (0.1 to 1.0, default: 0.8)
+- `--type`: Distortion type (0=Soft, 1=Hard, 2=Overdrive, 3=Fuzz, default: 0)
+
+### Reverb
+- `--room_size`: Room size (0.1 to 1.0, default: 0.5)
+- `--damping`: High frequency damping (0.0 to 1.0, default: 0.5)
+- `--mix`: Wet/dry mix (0.0 to 1.0, default: 0.3)
+- `--feedback`: Feedback amount (0.0 to 0.9, default: 0.5)
+- `--pre_delay`: Pre-delay time in milliseconds (0.0 to 100.0, default: 20.0)
+
+### Compression
+- `--threshold`: Compression threshold (0.0 to 1.0, default: 0.5)
+- `--ratio`: Compression ratio (1.0 to 20.0, default: 4.0)
+- `--attack`: Attack time in milliseconds (0.1 to 100.0, default: 10.0)
+- `--release`: Release time in milliseconds (10.0 to 1000.0, default: 100.0)
+- `--makeup`: Makeup gain (0.1 to 4.0, default: 1.0)
+
+### EQ
+- `--low_gain`: Low frequency gain in dB (-12.0 to 12.0, default: 0.0)
+- `--mid_gain`: Mid frequency gain in dB (-12.0 to 12.0, default: 0.0)
+- `--high_gain`: High frequency gain in dB (-12.0 to 12.0, default: 0.0)
+- `--low_freq`: Low/mid crossover frequency (100.0 to 1000.0, default: 300.0)
+- `--high_freq`: Mid/high crossover frequency (1000.0 to 8000.0, default: 3000.0)
+
+### Tremolo
+- `--rate`: Tremolo rate in Hz (0.1 to 20.0, default: 5.0)
+- `--depth`: Modulation depth (0.0 to 1.0, default: 0.7)
+- `--wave`: Wave shape (0=Sine, 1=Triangle, 2=Square, 3=Sawtooth, default: 0)
+
+## File Format Support
+
+Currently supports:
+- **Input**: 16-bit PCM WAV files
+- **Output**: 16-bit PCM WAV files
+- **Sample Rates**: 8 kHz to 192 kHz
+- **Channels**: Mono and stereo (effect-dependent)
+
+## Development
+
+### Project Structure
+
+```
+src/
+├── main.rs              # Entry point
+├── cli.rs               # Command-line interface
+├── audio_io.rs          # Audio file I/O utilities
+└── effects/
+    ├── mod.rs           # Effect trait and common utilities
+    ├── chorus.rs        # Chorus effect implementation
+    ├── distortion.rs    # Distortion effect implementation
+    ├── reverb.rs        # Reverb effect implementation
+    ├── compression.rs   # Compression effect implementation
+    ├── eq.rs           # EQ effect implementation
+    ├── flanger.rs      # Flanger effect implementation
+    ├── phaser.rs       # Phaser effect implementation
+    ├── tremolo.rs      # Tremolo effect implementation
+    ├── vibrato.rs      # Vibrato effect implementation
+    ├── pitch_shifting.rs # Pitch shifting effect (basic)
+    └── time_stretching.rs # Time stretching effect (basic)
+```
+
+### Adding New Effects
+
+1. Create a new module in `src/effects/`
+2. Implement the `AudioEffect` trait
+3. Register the effect in `src/cli.rs`
+4. Add tests following the existing patterns
+
+### Running Tests
+
+```bash
+cargo test
+```
+
+### Building for Release
+
+```bash
+cargo build --release
+```
+
+## Future Improvements
+
+- **Additional Effects**: Limiting, expansion, gate, frequency shifting, ring modulation, bitcrushing
+- **Better Algorithms**: Improved pitch shifting and time stretching using PSOLA or phase vocoder
+- **Multi-channel Support**: Full surround sound processing
+- **Real-time Processing**: Live audio processing capabilities
+- **Plugin Format**: VST/AU plugin versions
+- **GUI Interface**: Graphical user interface for parameter control
+
+## Dependencies
+
+- `hound`: WAV file I/O
+- `dasp`: Digital audio signal processing utilities
+- `biquad`: Digital filter implementations
+
+## License
+
+GNU General Public License v3.0 - see LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
