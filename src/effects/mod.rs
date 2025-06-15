@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 pub mod chorus;
 pub mod compression;
+pub mod delay;
 pub mod distortion;
 pub mod eq;
 pub mod flanger;
@@ -231,7 +232,8 @@ pub mod dsp {
 
         pub fn read(&self, delay_samples: usize) -> f32 {
             let delay_samples = delay_samples.min(self.max_delay_samples - 1);
-            let read_head = (self.write_head + self.max_delay_samples - delay_samples) % self.max_delay_samples;
+            let read_head = (self.write_head + self.max_delay_samples - delay_samples - 1)
+                % self.max_delay_samples;
             self.buffer[read_head]
         }
 

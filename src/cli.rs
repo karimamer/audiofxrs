@@ -1,6 +1,7 @@
-use crate::audio_io::{read_audio_file, write_audio_file, AudioError};
+use crate::audio_io::{read_audio_file, write_audio_file};
 use crate::effects::chorus::ChorusEffect;
 use crate::effects::compression::CompressionEffect;
+use crate::effects::delay::DelayEffect;
 use crate::effects::distortion::DistortionEffect;
 use crate::effects::eq::EqEffect;
 use crate::effects::flanger::FlangerEffect;
@@ -35,6 +36,7 @@ impl CliApp {
 
         // Register available effects
         available_effects.insert("chorus".to_string(), || Box::new(ChorusEffect::new()));
+        available_effects.insert("delay".to_string(), || Box::new(DelayEffect::new()));
         available_effects.insert("distortion".to_string(), || {
             Box::new(DistortionEffect::new())
         });
@@ -273,6 +275,7 @@ impl CliApp {
         println!();
         println!("EXAMPLES:");
         println!("    audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0");
+        println!("    audiofxrs delay input.wav output.wav --delay 500 --feedback 0.4");
         println!("    audiofxrs distortion input.wav output.wav --gain 3.0 --type 1");
         println!("    audiofxrs reverb input.wav output.wav --room_size 0.8 --mix 0.4");
         println!("    audiofxrs tremolo input.wav output.wav --rate 8.0 --depth 0.6");
@@ -369,6 +372,7 @@ mod tests {
         let app = CliApp::new();
         assert!(!app.available_effects.is_empty());
         assert!(app.available_effects.contains_key("chorus"));
+        assert!(app.available_effects.contains_key("delay"));
         assert!(app.available_effects.contains_key("distortion"));
         assert!(app.available_effects.contains_key("reverb"));
         assert!(app.available_effects.contains_key("compression"));
@@ -390,7 +394,7 @@ mod tests {
 
         // We can't easily test the actual parsing without mocking env::args(),
         // but we can test the structure exists
-        assert!(app.available_effects.len() >= 11);
+        assert!(app.available_effects.len() >= 12);
     }
 
     #[test]
