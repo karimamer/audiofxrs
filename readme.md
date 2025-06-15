@@ -30,6 +30,7 @@ The codebase has been completely refactored with a modular design:
 - **Effect Trait System**: All effects implement a common `AudioEffect` trait
 - **Parameter System**: Type-safe parameter handling with validation
 - **DSP Utilities**: Shared digital signal processing functions and delay lines
+
 ## Installation
 
 ```bash
