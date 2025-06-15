@@ -7,6 +7,7 @@ pub mod delay;
 pub mod distortion;
 pub mod eq;
 pub mod flanger;
+pub mod limiter;
 pub mod phaser;
 pub mod pitch_shifting;
 pub mod reverb;

@@ -10,6 +10,7 @@ A modular, command-line audio effects processor written in Rust. This project pr
 - **Chorus**: Adds richness by simulating multiple detuned versions of the input signal
 - **Delay/Echo**: Creates echoes by delaying the input signal with configurable feedback and damping
 - **Distortion**: Multiple distortion types including soft clip, hard clip, overdrive, and fuzz
+- **Limiter**: Prevents audio from exceeding a threshold with configurable attack/release times
 - **Reverb**: Algorithmic reverb with configurable room size, damping, and pre-delay
 - **Compression**: Dynamic range compression with configurable threshold, ratio, attack, and release
 - **EQ**: 3-band equalizer with adjustable frequency bands and gains
@@ -67,6 +68,9 @@ audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0 --mix 0.7
 # Apply delay/echo
 audiofxrs delay input.wav output.wav --delay 500 --feedback 0.4 --mix 0.5
 
+# Apply limiter
+audiofxrs limiter input.wav output.wav --threshold 0.8 --attack 1.0 --release 50
+
 # Apply distortion
 audiofxrs distortion input.wav output.wav --gain 3.0 --type 1 --mix 0.8
 
@@ -96,6 +100,12 @@ audiofxrs --info chorus
 - `--feedback`: Feedback amount (0.0 to 0.9, default: 0.3)
 - `--mix`: Wet/dry mix (0.0 to 1.0, default: 0.3)
 - `--damping`: High frequency damping of feedback (0.0 to 1.0, default: 0.2)
+
+### Limiter
+- `--threshold`: Limiting threshold (0.1 to 1.0, default: 0.8)
+- `--attack`: Attack time in milliseconds (0.1 to 10.0, default: 1.0)
+- `--release`: Release time in milliseconds (1.0 to 500.0, default: 50.0)
+- `--output`: Output gain (0.1 to 2.0, default: 1.0)
 
 ### Distortion
 - `--gain`: Input gain amount (0.1 to 10.0, default: 2.0)
@@ -152,6 +162,7 @@ src/
     ├── chorus.rs        # Chorus effect implementation
     ├── delay.rs         # Delay/Echo effect implementation
     ├── distortion.rs    # Distortion effect implementation
+    ├── limiter.rs       # Limiter effect implementation
     ├── reverb.rs        # Reverb effect implementation
     ├── compression.rs   # Compression effect implementation
     ├── eq.rs           # EQ effect implementation
