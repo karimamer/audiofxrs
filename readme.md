@@ -10,6 +10,7 @@ A modular, command-line audio effects processor written in Rust. This project pr
 - **Chorus**: Adds richness by simulating multiple detuned versions of the input signal
 - **Delay/Echo**: Creates echoes by delaying the input signal with configurable feedback and damping
 - **Distortion**: Multiple distortion types including soft clip, hard clip, overdrive, and fuzz
+- **Gate/Noise Gate**: Removes background noise by cutting off signals below a threshold
 - **Limiter**: Prevents audio from exceeding a threshold with configurable attack/release times
 - **Reverb**: Algorithmic reverb with configurable room size, damping, and pre-delay
 - **Compression**: Dynamic range compression with configurable threshold, ratio, attack, and release
@@ -68,6 +69,9 @@ audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0 --mix 0.7
 # Apply delay/echo
 audiofxrs delay input.wav output.wav --delay 500 --feedback 0.4 --mix 0.5
 
+# Apply gate/noise gate
+audiofxrs gate input.wav output.wav --threshold 0.1 --release 100 --ratio 1.0
+
 # Apply limiter
 audiofxrs limiter input.wav output.wav --threshold 0.8 --attack 1.0 --release 50
 
@@ -100,6 +104,13 @@ audiofxrs --info chorus
 - `--feedback`: Feedback amount (0.0 to 0.9, default: 0.3)
 - `--mix`: Wet/dry mix (0.0 to 1.0, default: 0.3)
 - `--damping`: High frequency damping of feedback (0.0 to 1.0, default: 0.2)
+
+### Gate
+- `--threshold`: Gate threshold (0.001 to 1.0, default: 0.1)
+- `--attack`: Attack time in milliseconds (0.1 to 100.0, default: 1.0)
+- `--hold`: Hold time in milliseconds (0.0 to 1000.0, default: 10.0)
+- `--release`: Release time in milliseconds (1.0 to 5000.0, default: 100.0)
+- `--ratio`: Gate ratio - 1.0 = full gate, 0.0 = no gate (0.0 to 1.0, default: 1.0)
 
 ### Limiter
 - `--threshold`: Limiting threshold (0.1 to 1.0, default: 0.8)
@@ -162,6 +173,7 @@ src/
     ├── chorus.rs        # Chorus effect implementation
     ├── delay.rs         # Delay/Echo effect implementation
     ├── distortion.rs    # Distortion effect implementation
+    ├── gate.rs          # Gate/Noise Gate effect implementation
     ├── limiter.rs       # Limiter effect implementation
     ├── reverb.rs        # Reverb effect implementation
     ├── compression.rs   # Compression effect implementation
@@ -195,7 +207,7 @@ cargo build --release
 
 ## Future Improvements
 
-- **Additional Effects**: Limiting, expansion, gate, frequency shifting, ring modulation, bitcrushing
+- **Additional Effects**: Expansion, frequency shifting, ring modulation, bitcrushing
 - **Better Algorithms**: Improved pitch shifting and time stretching using PSOLA or phase vocoder
 - **Multi-channel Support**: Full surround sound processing
 - **Real-time Processing**: Live audio processing capabilities

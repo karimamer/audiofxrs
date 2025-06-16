@@ -5,6 +5,7 @@ use crate::effects::delay::DelayEffect;
 use crate::effects::distortion::DistortionEffect;
 use crate::effects::eq::EqEffect;
 use crate::effects::flanger::FlangerEffect;
+use crate::effects::gate::GateEffect;
 use crate::effects::limiter::LimiterEffect;
 use crate::effects::phaser::PhaserEffect;
 use crate::effects::pitch_shifting::PitchShiftingEffect;
@@ -47,6 +48,7 @@ impl CliApp {
         });
         available_effects.insert("eq".to_string(), || Box::new(EqEffect::new()));
         available_effects.insert("flanger".to_string(), || Box::new(FlangerEffect::new()));
+        available_effects.insert("gate".to_string(), || Box::new(GateEffect::new()));
         available_effects.insert("limiter".to_string(), || Box::new(LimiterEffect::new()));
         available_effects.insert("tremolo".to_string(), || Box::new(TremoloEffect::new()));
         available_effects.insert("phaser".to_string(), || Box::new(PhaserEffect::new()));
@@ -279,6 +281,7 @@ impl CliApp {
         println!("    audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0");
         println!("    audiofxrs delay input.wav output.wav --delay 500 --feedback 0.4");
         println!("    audiofxrs distortion input.wav output.wav --gain 3.0 --type 1");
+        println!("    audiofxrs gate input.wav output.wav --threshold 0.1 --release 100");
         println!("    audiofxrs limiter input.wav output.wav --threshold 0.8 --attack 1.0");
         println!("    audiofxrs reverb input.wav output.wav --room_size 0.8 --mix 0.4");
         println!("    audiofxrs tremolo input.wav output.wav --rate 8.0 --depth 0.6");
@@ -381,6 +384,7 @@ mod tests {
         assert!(app.available_effects.contains_key("compression"));
         assert!(app.available_effects.contains_key("eq"));
         assert!(app.available_effects.contains_key("flanger"));
+        assert!(app.available_effects.contains_key("gate"));
         assert!(app.available_effects.contains_key("limiter"));
         assert!(app.available_effects.contains_key("tremolo"));
         assert!(app.available_effects.contains_key("phaser"));
@@ -398,7 +402,7 @@ mod tests {
 
         // We can't easily test the actual parsing without mocking env::args(),
         // but we can test the structure exists
-        assert!(app.available_effects.len() >= 13);
+        assert!(app.available_effects.len() >= 14);
     }
 
     #[test]
