@@ -1,4 +1,5 @@
 use crate::audio_io::{read_audio_file, write_audio_file};
+use crate::effects::bitcrusher::Bitcrusher;
 use crate::effects::chorus::ChorusEffect;
 use crate::effects::compression::CompressionEffect;
 use crate::effects::delay::DelayEffect;
@@ -37,6 +38,7 @@ impl CliApp {
         let mut available_effects: HashMap<String, fn() -> Box<dyn AudioEffect>> = HashMap::new();
 
         // Register available effects
+        available_effects.insert("bitcrusher".to_string(), || Box::new(Bitcrusher::new()));
         available_effects.insert("chorus".to_string(), || Box::new(ChorusEffect::new()));
         available_effects.insert("delay".to_string(), || Box::new(DelayEffect::new()));
         available_effects.insert("distortion".to_string(), || {
@@ -278,6 +280,7 @@ impl CliApp {
         println!("    -i, --info <effect> Show detailed information about an effect");
         println!();
         println!("EXAMPLES:");
+        println!("    audiofxrs bitcrusher input.wav output.wav --bit_depth 4.0 --sample_rate_reduction 2.0");
         println!("    audiofxrs chorus input.wav output.wav --rate 2.0 --depth 3.0");
         println!("    audiofxrs delay input.wav output.wav --delay 500 --feedback 0.4");
         println!("    audiofxrs distortion input.wav output.wav --gain 3.0 --type 1");
@@ -377,6 +380,7 @@ mod tests {
     fn test_cli_app_creation() {
         let app = CliApp::new();
         assert!(!app.available_effects.is_empty());
+        assert!(app.available_effects.contains_key("bitcrusher"));
         assert!(app.available_effects.contains_key("chorus"));
         assert!(app.available_effects.contains_key("delay"));
         assert!(app.available_effects.contains_key("distortion"));
@@ -402,7 +406,7 @@ mod tests {
 
         // We can't easily test the actual parsing without mocking env::args(),
         // but we can test the structure exists
-        assert!(app.available_effects.len() >= 14);
+        assert!(app.available_effects.len() >= 15);
     }
 
     #[test]
