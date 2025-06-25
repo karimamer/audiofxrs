@@ -22,6 +22,7 @@ impl fmt::Display for AudioError {
 
 impl Error for AudioError {}
 
+#[derive(Clone)]
 pub struct AudioData {
     pub samples: Vec<f32>,
     pub spec: WavSpec,

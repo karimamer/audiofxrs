@@ -118,17 +118,14 @@ impl AudioEffect for Bitcrusher {
     }
 
     fn process(&mut self, input: &AudioData) -> Result<AudioData, String> {
-        let mut output = input.clone();
+        let mut output_samples = Vec::with_capacity(input.samples.len());
         
-        for channel in 0..output.channels {
-            for sample_idx in 0..output.samples.len() {
-                let input_sample = output.samples[sample_idx][channel];
-                let crushed = self.crush_sample(input_sample, output.sample_rate as f32);
-                output.samples[sample_idx][channel] = crushed;
-            }
+        for &sample in &input.samples {
+            let crushed = self.crush_sample(sample, input.sample_rate as f32);
+            output_samples.push(crushed);
         }
         
-        Ok(output)
+        Ok(AudioData::new(output_samples, input.spec))
     }
 
     fn reset(&mut self) {

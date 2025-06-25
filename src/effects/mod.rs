@@ -1,6 +1,7 @@
 use crate::audio_io::AudioData;
 use std::collections::HashMap;
 
+pub mod auto_wah;
 pub mod bitcrusher;
 pub mod chorus;
 pub mod compression;
